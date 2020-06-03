@@ -1,3 +1,5 @@
+#SELENIUM TUTORIAL:
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -9,9 +11,32 @@ import time
 PATH = '/home/david/Chrome_web_driver/chromedriver'
 driver = webdriver.Chrome(PATH)
 
+#Open web and get title:
 driver.get('https://techwithtim.net')
 print(driver.title)
 
+##Navigate through buttom clicking:
+link = driver.find_element_by_link_text("Python Programming")
+link.click()
+
+try:
+    element = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.LINK_TEXT, "Beginner Python Tutorials"))
+    )
+    element.click()
+
+    element = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.ID, "sow-button-19310003"))
+    )
+    element.click()
+except:
+    driver.quit()
+
+driver.back()
+driver.back()
+driver.back()
+
+##Search bars and retrieve results:
 search = driver.find_element_by_name('s')    
 search.send_keys("test")
 search.send_keys(Keys.RETURN)
@@ -29,6 +54,5 @@ finally:
     driver.quit()
 
 
-
 time.sleep(5)
-driver.quit()   
+#driver.quit()   
