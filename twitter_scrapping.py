@@ -30,3 +30,4 @@ driver.implicitly_wait(1)
 driver.find_element_by_xpath('//*[@id="react-root"]/div/div/div[2]/main/div/div/form/div/div[3]/div').click()
 
 driver.implicitly_wait(5)
+
