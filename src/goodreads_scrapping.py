@@ -4,8 +4,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 
+from goodread_utils import *
 
 dotenv.load_dotenv()
 
@@ -16,49 +16,19 @@ GR_USER = os.getenv("GR_USER")
 
 driver = webdriver.Chrome(DRIVER)
 
-###LOG IN TO GOODREADS ACCOUNT:
-
 #Open web:
 driver.get('https://www.goodreads.com/')
-
-driver.implicitly_wait(5) 
-username_field = driver.find_element_by_id("userSignInFormEmail")
-password_field = driver.find_element_by_id("user_password")
+driver.implicitly_wait(3)
 
 
-username_field.send_keys(GR_USER)
-driver.implicitly_wait(1)
-    
-password_field.send_keys(GR_PASS)
-driver.implicitly_wait(1)
-
-#Click the submit button (the third element formbox)
-submit = driver.find_elements_by_class_name('formBox')
-submit[2].click()
-
-driver.implicitly_wait(5) 
+###LOG IN TO GOODREADS ACCOUNT:
+gr_log(driver, GR_USER, GR_PASS)
 
 
 ###FIND A BOOK
-
 BOOK_NAME = input('Give me a book to look for: ')
+get_book(driver, BOOK_NAME)
 
-inputs = driver.find_elements_by_tag_name('input')
-
-#The search box is the first input tag
-search_box = 0
-for i in inputs:
-    search_box = i
-    break
-
-#Input the book name and hit enter
-search_box.send_keys(BOOK_NAME)
-search_box.send_keys(Keys.RETURN)
-driver.implicitly_wait(5)
-
-#SELECT THE FIRST INSTANCE
-
-driver.find_element_by_class_name('bookTitle').click()
 
 #GET THE REVIEWS
 
