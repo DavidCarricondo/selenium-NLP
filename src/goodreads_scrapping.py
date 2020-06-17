@@ -67,7 +67,7 @@ reviews_container = driver.find_elements_by_class_name('review')
 reviews = {}
 
 for i, e in enumerate(reviews_container):
-    reviews[i] = e.getText()
+    reviews[i] = e.text
 
 print(reviews)
 
