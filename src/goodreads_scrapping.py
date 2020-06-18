@@ -41,4 +41,4 @@ for i, e in enumerate(reviews_container):
 
 print(reviews)
 
-#driver.quit()
+driver.quit()
