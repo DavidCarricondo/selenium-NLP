@@ -30,7 +30,7 @@ def get_book(driver, name):
     #Input the book name and hit enter
     search_box.send_keys(name)
     search_box.send_keys(Keys.RETURN)
-    driver.implicitly_wait(3)
+    driver.implicitly_wait(2)
 
     #SELECT THE FIRST INSTANCE
     driver.find_element_by_class_name('bookTitle').click()
