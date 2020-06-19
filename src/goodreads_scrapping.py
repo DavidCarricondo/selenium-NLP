@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+import json
 from goodread_utils import *
 
 dotenv.load_dotenv()
@@ -37,12 +37,21 @@ reviews_container = driver.find_elements_by_class_name('review')
 reviews = {}
 
 for i, e in enumerate(reviews_container):
-    rev_text = e.find_element_by_class_name('readable')
-    rev_text = rev_text.find_elements_by_tag_name('span')
-    for tx in rev_text:
-        print(tx)
-        reviews[i] = tx.text
+    try:
+        read = e.find_element_by_class_name('readable')
+    except:
+        continue
+    try:
+        read.find_element_by_link_text('...more').click()
+    except:
+        pass
+    rev = read.find_elements_by_tag_name('span')
+    reviews[i] = (rev[0].text if len(rev)==1 else rev[1].text)
 
-print(reviews)
 
-#driver.quit()
+#Save json:
+
+with open('../OUTPUT/data.json', 'w') as fp:
+    json.dump(reviews, fp)
+
+driver.quit()
