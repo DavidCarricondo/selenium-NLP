@@ -34,3 +34,23 @@ def get_book(driver, name):
 
     #SELECT THE FIRST INSTANCE
     driver.find_element_by_class_name('bookTitle').click()
+
+def get_GR_reviews(driver):
+    reviews_container = driver.find_elements_by_class_name('review')
+
+    reviews = {}
+
+    for i, e in enumerate(reviews_container):
+        try:
+            read = e.find_element_by_class_name('readable')
+        except:
+            continue
+        try:
+            read.find_element_by_link_text('...more').click()
+        except:
+            pass
+        rev = read.find_elements_by_tag_name('span')
+        reviews[i] = (rev[0].text if len(rev)==1 else rev[1].text)
+    return reviews
+
+    
