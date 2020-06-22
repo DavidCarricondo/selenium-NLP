@@ -11,6 +11,8 @@ dotenv.load_dotenv()
 DRIVER = os.getenv("DRIVER")
 GR_PASS = os.getenv("GR_PASS")
 GR_USER = os.getenv("GR_USER")
+BOOK_NAME = input('Give me a book to look for: ')
+
 
 driver = webdriver.Chrome(DRIVER)
 
@@ -24,7 +26,6 @@ gr_log(driver, GR_USER, GR_PASS)
 
 
 ###FIND A BOOK
-BOOK_NAME = input('Give me a book to look for: ')
 get_book(driver, BOOK_NAME)
 driver.implicitly_wait(3)
 
