@@ -1,6 +1,7 @@
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
+from dash.dependencies import Input, Output
 import json
 import tensorflow as tf
 import tensorflow_datasets as tfds
@@ -50,16 +51,29 @@ fig = px.histogram(predictions, marginal='box')
 ### Dashboard
 app = dash.Dash(__name__)
 
-app.layout = html.Div([
+app.layout = html.Div(children=
+[
     html.H1("My Dash dashboard", style={'text-align': 'center'}),
 
-    dcc.Input(
+    dcc.Input(id='Book_input',
         placeholder='Enter a book name...',
         type='text',
         value=''),
+    html.Div(id='output'),
 
-    dcc.Graph(figure=fig)
+    dcc.Graph(figure=fig),
+    dcc.Graph(figure={
+        'data': [{'x':predictions, 'type':'bar', 'name':'PREDICTIONS'}], #type: line, histogram, bar
+        'layout': {'title':'Sentiment predictions'}
+    })
 ])
+
+@app.callback(
+    Output(component_id='output', component_property='children'),
+    [Input(component_id='Book_input', component_property='value')])
+def update_value(input_data):
+    return f"Input: {input_data}"
+
 
 if __name__=='__main__':
     app.run_server(debug=True)
