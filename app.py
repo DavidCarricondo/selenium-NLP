@@ -1,3 +1,4 @@
+import os
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
@@ -6,18 +7,13 @@ import json
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import plotly.express as px
+from src.app_utils import *
+from src.goodreads_scrapping import GR_scrapping
 #Using keras directly (from keras import load_model)
 #returns an error probably due to a mismatch in the keras version and the keras tensorflow version
 from tensorflow import keras
 
-##ALL THIS SHOULD BE IN OTHER SCRIPT
 model = keras.models.load_model('./OUTPUT/models/model_2ltsm.h5')
-
-with open('./OUTPUT/data.json') as f:
-    data_json = f.read()
-data = json.loads(data_json)
-
-
 #Import the encoder from the tensorflow datasets,
 #THis is going to be deprecated, so I have to rerun the model with 
 #a non encoded data and encode it myself...
@@ -25,29 +21,18 @@ _, info = tfds.load('imdb_reviews/subwords8k', with_info=True,
                           as_supervised=True)
 encoder = info.features['text'].encoder
 
-#Function to add the padding at the end of the sentences:
-def pad_to_size(vec, size):
-  zeros = [0] * (size - len(vec))
-  vec.extend(zeros)
-  return vec
-#Function to get the predictions:
-def sample_predict(sample_pred_text, pad):
-    predictions = []
-    for rev in sample_pred_text:
-        rev = rev.replace('\n', '')    
-        encoded_sample_pred_text = encoder.encode(rev)
-        if pad:
-            encoded_sample_pred_text = pad_to_size(encoded_sample_pred_text, 64)
-        encoded_sample_pred_text = tf.cast(encoded_sample_pred_text, tf.float32)
-        predictions.append(model.predict(tf.expand_dims(encoded_sample_pred_text, 0))[0][0])
-    return (predictions)
 
-predictions = sample_predict(data, pad=True)
+DRIVER = os.getenv("DRIVER")
+GR_PASS = os.getenv("GR_PASS")
+GR_USER = os.getenv("GR_USER")
 
+'''
+reviews = GR_scrapping(DRIVER, GR_PASS, GR_USER, 'lord of the flies')
+predictions = sample_predict(reviews, model, encoder, pad=True)
+print(predictions)
 fig = px.histogram(predictions, marginal='box')
-
-####
-
+fig
+'''
 ### Dashboard
 app = dash.Dash(__name__)
 
@@ -55,29 +40,33 @@ app.layout = html.Div(children=
 [
     html.H1("My Dash dashboard", style={'text-align': 'center'}),
 
-    dcc.Input(id='Book_input',
+    dcc.Input(id='book_input',
         placeholder='Enter a book name...',
         type='text',
-        value=''),
+        value='Lord of the flies'),
     html.Div(id='output'),
-
-    dcc.Graph(figure=fig),
-    dcc.Graph(figure={
-        'data': [{'x':predictions, 'type':'bar', 'name':'PREDICTIONS'}], #type: line, histogram, bar
-        'layout': {'title':'Sentiment predictions'}
-    })
+    
+    #dcc.Graph(figure=fig),
+    #dcc.Graph(figure={
+    #    'data': [{'x':predictions, 'type':'bar', 'name':'PREDICTIONS'}], #type: line, histogram, bar
+    #    'layout': {'title':'Sentiment predictions'}
+    #})
+    
 ])
 
 @app.callback(
     Output(component_id='output', component_property='children'),
-    [Input(component_id='Book_input', component_property='value')])
+    [Input(component_id='book_input', component_property='value')])
 def update_value(input_data):
-    return f"Input: {input_data}"
+    reviews = GR_scrapping(DRIVER, GR_PASS, GR_USER, input_data)
+    predictions = sample_predict(reviews, model, encoder, pad=True)
+    fig = px.histogram(predictions, marginal='box')
+    return dcc.Graph(figure=fig)
+
 
 
 if __name__=='__main__':
     app.run_server(debug=True)
-
 
 
 
