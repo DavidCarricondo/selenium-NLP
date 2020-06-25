@@ -44,6 +44,7 @@ app.layout = html.Div(children=
         placeholder='Enter a book name...',
         type='text',
         value='Lord of the flies'),
+    html.Button(id='submit', type='submit', children='ok'),
     html.Div(id='output'),
     
     #dcc.Graph(figure=fig),
