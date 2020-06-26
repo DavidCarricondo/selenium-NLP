@@ -45,6 +45,7 @@ app.layout = html.Div(children=
         type='text',
         value='Lord of the flies'),
     html.Button(id='submit', type='submit', children='ok'),
+    html.Div(id='prediction_store', style={'display': 'none'}),
     html.Div(id='output'),
     
     #dcc.Graph(figure=fig),
@@ -56,11 +57,17 @@ app.layout = html.Div(children=
 ])
 
 @app.callback(
-    Output(component_id='output', component_property='children'),
+    Output(component_id='prediction_store', component_property='children'),
     [Input(component_id='book_input', component_property='value')])
-def update_value(input_data):
+def update_book(input_data):
     reviews = GR_scrapping(DRIVER, GR_PASS, GR_USER, input_data)
     predictions = sample_predict(reviews, model, encoder, pad=True)
+    return predictions
+
+@app.callback(
+    Output(component_id='output', component_property='children'),
+    [Input(component_id='prediction_store', component_property='children')])
+def create_boxplot(predictions):
     fig = px.histogram(predictions, marginal='box')
     return dcc.Graph(figure=fig)
 
