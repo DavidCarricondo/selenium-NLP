@@ -22,7 +22,7 @@ def GR_scrapping(DRIVER, GR_PASS, GR_USER, BOOK_NAME):
 
     ###FIND A BOOK
     get_book(driver, BOOK_NAME)
-    driver.implicitly_wait(3)
+    driver.implicitly_wait(4)
 
 
     #GET THE REVIEWS

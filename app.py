@@ -46,14 +46,9 @@ app.layout = html.Div(children=
         value='Lord of the flies'),
     html.Button(id='submit', type='submit', children='ok'),
     html.Div(id='prediction_store', style={'display': 'none'}),
-    html.Div(id='output'),
-    
-    #dcc.Graph(figure=fig),
-    #dcc.Graph(figure={
-    #    'data': [{'x':predictions, 'type':'bar', 'name':'PREDICTIONS'}], #type: line, histogram, bar
-    #    'layout': {'title':'Sentiment predictions'}
-    #})
-    
+    html.Div(id='output1'),
+    html.Div(id='output2')
+       
 ])
 
 @app.callback(
@@ -65,11 +60,20 @@ def update_book(input_data):
     return predictions
 
 @app.callback(
-    Output(component_id='output', component_property='children'),
+    Output(component_id='output1', component_property='children'),
     [Input(component_id='prediction_store', component_property='children')])
 def create_boxplot(predictions):
     fig = px.histogram(predictions, marginal='box')
     return dcc.Graph(figure=fig)
+
+@app.callback(
+    Output(component_id='output2', component_property='children'),
+    [Input(component_id='prediction_store', component_property='children')])
+def create_barplot(predictions):
+    return dcc.Graph(figure={
+        'data': [{'x':predictions, 'type':'bar', 'name':'PREDICTIONS'}], #type: line, histogram, bar
+        'layout': {'title':'Sentiment predictions'}
+        })
 
 
 
