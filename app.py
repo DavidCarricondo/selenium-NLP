@@ -43,7 +43,7 @@ app.layout = html.Div(children=
     dcc.Input(id='book_input',
         placeholder='Enter a book name...',
         type='text',
-        value='Lord of the flies'),
+        value=''),
     html.Button(id='submit', type='submit', children='ok'),
     html.Div(id='prediction_store', style={'display': 'none'}),
     html.Div(id='output1'),
@@ -55,7 +55,9 @@ app.layout = html.Div(children=
     Output(component_id='prediction_store', component_property='children'),
     [Input(component_id='book_input', component_property='value')])
 def update_book(input_data):
-    reviews = GR_scrapping(DRIVER, GR_PASS, GR_USER, input_data)
+    if input_data=='':
+        return None
+    reviews = GR_scrapping(DRIVER, input_data)
     predictions = sample_predict(reviews, model, encoder, pad=True)
     return predictions
 
@@ -63,6 +65,8 @@ def update_book(input_data):
     Output(component_id='output1', component_property='children'),
     [Input(component_id='prediction_store', component_property='children')])
 def create_boxplot(predictions):
+    if predictions=='':
+        return None
     fig = px.histogram(predictions, marginal='box')
     return dcc.Graph(figure=fig)
 
@@ -70,6 +74,8 @@ def create_boxplot(predictions):
     Output(component_id='output2', component_property='children'),
     [Input(component_id='prediction_store', component_property='children')])
 def create_barplot(predictions):
+    if predictions=='':
+        return None
     return dcc.Graph(figure={
         'data': [{'x':predictions, 'type':'bar', 'name':'PREDICTIONS'}], #type: line, histogram, bar
         'layout': {'title':'Sentiment predictions'}

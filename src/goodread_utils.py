@@ -16,17 +16,19 @@ def gr_log(driver, user, password):
 
     driver.implicitly_wait(3) 
 
-def get_book(driver, name):
-    try:
-        inputs = driver.find_elements_by_tag_name('input')
-    except:
-        raise ValueError('I do not seem to find that book')    
-    #The search box is the first input tag
-    search_box = 0
-    for i in inputs:
-        search_box = i
-        break
-
+def get_book(driver, name, log=False):
+    if log==True:
+        try:
+            inputs = driver.find_elements_by_tag_name('input')
+        except:
+            raise ValueError('I do not seem to find that book')    
+        #The search box is the first input tag
+        search_box = 0
+        for i in inputs:
+            search_box = i
+            break
+    else:
+        search_box = driver.find_element_by_id('sitesearch_field')        
     #Input the book name and hit enter
     search_box.send_keys(name)
     search_box.send_keys(Keys.RETURN)

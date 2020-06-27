@@ -8,7 +8,7 @@ from src.goodread_utils import *
 dotenv.load_dotenv()
 
 
-def GR_scrapping(DRIVER, GR_PASS, GR_USER, BOOK_NAME):
+def GR_scrapping(DRIVER, BOOK_NAME, GR_PASS=None, GR_USER=None):
     driver = webdriver.Chrome(DRIVER)
 
     #Open web:
@@ -17,11 +17,11 @@ def GR_scrapping(DRIVER, GR_PASS, GR_USER, BOOK_NAME):
 
 
     ###LOG IN TO GOODREADS ACCOUNT:
-    gr_log(driver, GR_USER, GR_PASS)
+    #gr_log(driver, GR_USER, GR_PASS)
 
 
     ###FIND A BOOK
-    get_book(driver, BOOK_NAME)
+    get_book(driver, BOOK_NAME, log=False)
     driver.implicitly_wait(4)
 
 
