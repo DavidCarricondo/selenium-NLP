@@ -2,7 +2,7 @@ import os
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import json
 import tensorflow as tf
 import tensorflow_datasets as tfds
@@ -33,28 +33,55 @@ print(predictions)
 fig = px.histogram(predictions, marginal='box')
 fig
 '''
-### Dashboard
-app = dash.Dash(__name__)
+# CSS EXTERNAL FILE
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css',
+                        'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
+                        'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css']
 
-app.layout = html.Div(children=
+
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
+
+### Dashboard
+app = dash.Dash(__name__,
+                external_stylesheets=external_stylesheets,
+                meta_tags=[
+
+                    {
+
+                        "name": "viewport",
+
+                        "content": "width=device-width, initial-scale=1, maximum-scale=1",
+
+                    },
+
+                ],)
+
+
+app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 [
-    html.H1("My Dash dashboard", style={'text-align': 'center'}),
+    html.H1("Book reviews analysis", style={'color': colors['text'], 'text-align': 'center'}),
 
     dcc.Input(id='book_input',
         placeholder='Enter a book name...',
         type='text',
         value=''),
-    html.Button(id='submit', type='submit', children='ok'),
+    html.Button(id='submit_button', n_clicks=0, children='Submit'),
     html.Div(id='prediction_store', style={'display': 'none'}),
     html.Div(id='output1'),
     html.Div(id='output2')
        
 ])
 
+
+
 @app.callback(
     Output(component_id='prediction_store', component_property='children'),
-    [Input(component_id='book_input', component_property='value')])
-def update_book(input_data):
+    [Input(component_id='submit_button', component_property='n_clicks')],
+    [State(component_id='book_input', component_property='value')])
+def update_book(n_clicks, input_data):
     if input_data=='':
         return None
     reviews = GR_scrapping(DRIVER, input_data)
@@ -68,6 +95,7 @@ def create_boxplot(predictions):
     if predictions=='':
         return None
     fig = px.histogram(predictions, marginal='box')
+    fig.update_layout(height=500, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
     return dcc.Graph(figure=fig)
 
 @app.callback(
