@@ -2,6 +2,7 @@ import os
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import json
 import tensorflow as tf
@@ -26,13 +27,7 @@ DRIVER = os.getenv("DRIVER")
 GR_PASS = os.getenv("GR_PASS")
 GR_USER = os.getenv("GR_USER")
 
-'''
-reviews = GR_scrapping(DRIVER, GR_PASS, GR_USER, 'lord of the flies')
-predictions = sample_predict(reviews, model, encoder, pad=True)
-print(predictions)
-fig = px.histogram(predictions, marginal='box')
-fig
-'''
+
 # CSS EXTERNAL FILE
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css',
                         'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
@@ -43,6 +38,29 @@ colors = {
     'background': '#111111',
     'text': '#7FDBFF'
 }
+
+###CARDS
+wordcloud_card = dbc.Card(
+    [
+        dbc.CardBody(
+            html.Div(id='wordcloud')
+        ),
+    ],
+    #style={"width": "18rem"},
+)
+
+freqplot_card = dbc.Card(
+    [
+        dbc.CardBody(
+            html.Div(id='freqplot')
+        ),
+    ],
+    #style={"width": "18rem"},
+)
+
+cards = dbc.Row(
+    [dbc.Col(wordcloud_card, width="auto"), dbc.Col(freqplot_card, width="auto")],
+)
 
 ### Dashboard
 app = dash.Dash(__name__,
@@ -69,24 +87,26 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
         type='text',
         value=''),
     html.Button(id='submit_button', n_clicks=0, children='Submit'),
+    dcc.Store(id='reviews_store'),
     html.Div(id='prediction_store', style={'display': 'none'}),
     html.Div(id='output1'),
-    html.Div(id='output2')
-       
+    html.Div(id='output2'),
+    html.Div(children=cards)
 ])
 
 
 
 @app.callback(
-    Output(component_id='prediction_store', component_property='children'),
+    [Output(component_id='prediction_store', component_property='children'),
+    Output('reviews_store', 'data')],
     [Input(component_id='submit_button', component_property='n_clicks')],
     [State(component_id='book_input', component_property='value')])
 def update_book(n_clicks, input_data):
     if input_data=='':
-        return None
+        return None, None
     reviews = GR_scrapping(DRIVER, input_data)
     predictions = sample_predict(reviews, model, encoder, pad=True)
-    return predictions
+    return predictions, reviews
 
 @app.callback(
     Output(component_id='output1', component_property='children'),
@@ -109,7 +129,23 @@ def create_barplot(predictions):
         'layout': {'title':'Sentiment predictions'}
         })
 
+@app.callback(
+    Output(component_id='wordcloud', component_property='children'),
+    [Input('reviews_store', 'data')])
+def create_wordcloud(reviews):
+    if reviews==None:
+        return None
+    fig, _, _ = plotly_wordcloud(reviews)
+    return dcc.Graph(figure=fig)
 
+@app.callback(
+    Output(component_id='freqplot', component_property='children'),
+    [Input('reviews_store', 'data')])
+def create_wordcloud(reviews):
+    if reviews==None:
+        return None
+    _, fig, _ = plotly_wordcloud(reviews)
+    return dcc.Graph(figure=fig)
 
 if __name__=='__main__':
     app.run_server(debug=True)
