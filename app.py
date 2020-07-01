@@ -29,10 +29,8 @@ GR_USER = os.getenv("GR_USER")
 
 
 # CSS EXTERNAL FILE
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css',
-                        'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
-                        'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css']
 
+external_stylesheets = external_stylesheets = [dbc.themes.BOOTSTRAP]
 
 colors = {
     'background': '#111111',
@@ -40,27 +38,51 @@ colors = {
 }
 
 ###CARDS
-wordcloud_card = dbc.Card(
-    [
-        dbc.CardBody(
-            html.Div(id='wordcloud')
-        ),
-    ],
-    #style={"width": "18rem"},
-)
 
-freqplot_card = dbc.Card(
-    [
-        dbc.CardBody(
-            html.Div(id='freqplot')
-        ),
-    ],
-    #style={"width": "18rem"},
-)
+input_card = dbc.Card([
+    dbc.CardBody(
+        [dcc.Input(id='book_input',
+        placeholder='Enter a book name...',
+        type='text',
+        value='',
+        style={'text-align': 'center'}),
+        html.Button(id='submit_button', n_clicks=0, children='Submit')],
+    ),
+])
 
-cards = dbc.Row(
-    [dbc.Col(wordcloud_card, width="auto"), dbc.Col(freqplot_card, width="auto")],
-)
+cards = dbc.Container([
+    dbc.Row([dbc.Col(input_card, align='center')]),
+    dbc.Row([dbc.Col(
+        dbc.Card([
+            dbc.CardHeader(html.H5("Sentiment analysis of the reviews", style={'color': colors['text'], 'text-align': 'center'})),
+            dbc.CardBody(
+                dbc.Row([
+                    dbc.Col( html.Div(id='output1'), width=6), 
+                    dbc.Col(html.Div(id='output2'), width=6),
+                ])
+            )
+        ])
+    )]),
+    dbc.Row([dbc.Col(
+        dbc.Card([
+            dbc.CardHeader(html.H5("Word frequency of the reviews", style={'color': colors['text'], 'text-align': 'center'})),
+            dbc.CardBody(
+                dbc.Row([
+                    dbc.Col(html.Div(id='wordcloud'), width=6), 
+                    dbc.Col(html.Div(id='treeplot'), width=6)
+                ]),
+            )
+        ])
+    )]),
+    dbc.Row([dbc.Col(
+        dbc.Card([
+            dbc.CardBody(
+                html.Div(id='freqplot')
+            )
+        ])
+        )
+    ]),
+])
 
 ### Dashboard
 app = dash.Dash(__name__,
@@ -81,18 +103,13 @@ app = dash.Dash(__name__,
 app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 [
     html.H1("Book reviews analysis", style={'color': colors['text'], 'text-align': 'center'}),
-
-    dcc.Input(id='book_input',
-        placeholder='Enter a book name...',
-        type='text',
-        value=''),
-    html.Button(id='submit_button', n_clicks=0, children='Submit'),
-    dcc.Store(id='reviews_store'),
     html.Div(id='prediction_store', style={'display': 'none'}),
-    html.Div(id='output1'),
-    html.Div(id='output2'),
+    dcc.Store(id='reviews_store'),
     html.Div(children=cards)
+    
 ])
+
+
 
 
 
@@ -112,7 +129,7 @@ def update_book(n_clicks, input_data):
     Output(component_id='output1', component_property='children'),
     [Input(component_id='prediction_store', component_property='children')])
 def create_boxplot(predictions):
-    if predictions=='':
+    if predictions==None:
         return None
     fig = px.histogram(predictions, marginal='box')
     fig.update_layout(height=500, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
@@ -122,7 +139,7 @@ def create_boxplot(predictions):
     Output(component_id='output2', component_property='children'),
     [Input(component_id='prediction_store', component_property='children')])
 def create_barplot(predictions):
-    if predictions=='':
+    if predictions==None:
         return None
     return dcc.Graph(figure={
         'data': [{'x':predictions, 'type':'bar', 'name':'PREDICTIONS'}], #type: line, histogram, bar
@@ -136,6 +153,15 @@ def create_wordcloud(reviews):
     if reviews==None:
         return None
     fig, _, _ = plotly_wordcloud(reviews)
+    return dcc.Graph(figure=fig)
+
+@app.callback(
+    Output(component_id='treeplot', component_property='children'),
+    [Input('reviews_store', 'data')])
+def create_treemap(reviews):
+    if reviews==None:
+        return None
+    _, _, fig = plotly_wordcloud(reviews)
     return dcc.Graph(figure=fig)
 
 @app.callback(
