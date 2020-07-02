@@ -117,4 +117,4 @@ def get_gr_database(DRIVER, GR_USER, GR_PASS, books):
     return print(f'The reviews dataset has increased in {len(reviews)} reviews')
 
 if __name__=='__main__':
-    get_gr_database(DRIVER, GR_USER, GR_PASS, list(books[:200]))
+    get_gr_database(DRIVER, GR_USER, GR_PASS, list(books[0][:200]))
