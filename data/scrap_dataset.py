@@ -89,7 +89,7 @@ def get_GR_reviews(driver, reviews):
     reviews.update(rvws)
 
    
-  def get_gr_database(DRIVER, GR_USER, GR_PASS, books):
+def get_gr_database(DRIVER, GR_USER, GR_PASS, books):
     '''
     Main function that uses the other functions to create a database with goodreads reviews and their rating
     '''
