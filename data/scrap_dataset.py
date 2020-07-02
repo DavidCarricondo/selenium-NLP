@@ -66,7 +66,10 @@ def get_book2(driver, name):
     driver.implicitly_wait(4)
 
     #SELECT THE FIRST INSTANCE
-    driver.find_element_by_class_name('bookTitle').click()
+    try:
+        driver.find_element_by_class_name('bookTitle').click()
+    except:
+        raise NameError
 
 def get_GR_reviews(driver, reviews):
     reviews_container = driver.find_elements_by_class_name('review')
@@ -105,7 +108,12 @@ def get_gr_database(DRIVER, GR_USER, GR_PASS, books):
     for name in books[1:]:
         get_book2(driver, name.strip())
         driver.implicitly_wait(2)
-        get_GR_reviews(driver, reviews)
+        try:
+            get_GR_reviews(driver, reviews)
+        except NameError:
+            continue
+        print(name)
+
         
     driver.quit()
     with open("../OUTPUT/goodread_reviews_dataset.json", "r+") as file:
