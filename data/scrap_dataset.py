@@ -106,13 +106,14 @@ def get_gr_database(DRIVER, GR_USER, GR_PASS, books):
     get_GR_reviews(driver, reviews)
     
     for name in books[1:]:
-        get_book2(driver, name.strip())
-        driver.implicitly_wait(2)
+        print(name)
         try:
-            get_GR_reviews(driver, reviews)
+            get_book2(driver, name.strip())
         except NameError:
             continue
-        print(name)
+        driver.implicitly_wait(2)
+
+        get_GR_reviews(driver, reviews)
 
         
     driver.quit()
