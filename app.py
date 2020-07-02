@@ -28,7 +28,7 @@ GR_PASS = os.getenv("GR_PASS")
 GR_USER = os.getenv("GR_USER")
 
 
-# CSS EXTERNAL FILE
+###STYLE
 
 external_stylesheets = external_stylesheets = [dbc.themes.BOOTSTRAP]
 
@@ -84,7 +84,8 @@ cards = dbc.Container([
     ]),
 ])
 
-### Dashboard
+### DASHBOARD
+
 app = dash.Dash(__name__,
                 external_stylesheets=external_stylesheets,
                 meta_tags=[
@@ -112,6 +113,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 
 
 
+##CALLBACKS
 
 @app.callback(
     [Output(component_id='prediction_store', component_property='children'),
