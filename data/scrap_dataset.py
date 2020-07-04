@@ -111,7 +111,7 @@ def get_gr_database(DRIVER, GR_USER, GR_PASS, books):
             get_book2(driver, name.strip())
         except NameError:
             continue
-        driver.implicitly_wait(2)
+        driver.implicitly_wait(3)
 
         get_GR_reviews(driver, reviews)
 
@@ -126,4 +126,4 @@ def get_gr_database(DRIVER, GR_USER, GR_PASS, books):
     return print(f'The reviews dataset has increased in {len(reviews)} reviews')
 
 if __name__=='__main__':
-    get_gr_database(DRIVER, GR_USER, GR_PASS, list(books[0][:200]))
+    get_gr_database(DRIVER, GR_USER, GR_PASS, list(books[0]))
