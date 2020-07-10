@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 import pandas as pd
 import json
+import time
 
 ##This script load runs a function to create a dataset with reviews and ratings scrapped from goodreads.com from a list of more than 1000 books
 
@@ -73,13 +74,13 @@ def get_book2(driver, name):
 
 def get_GR_reviews(driver, reviews):
     
-    #driver.find_element_by_class_name('next_page').click()
-    #driver.implicitly_wait(2)
-    
+    driver.find_element_by_class_name('next_page').click()
+    time.sleep(5)
+
     reviews_container = driver.find_elements_by_class_name('review')
     rvws = {}
-    number = len(reviews)
-    for i, e in enumerate(reviews_container):
+    number = len(reviews) + 26919
+    for e in reviews_container:
         try:
             grade = e.find_element_by_class_name('staticStar').text
             read = e.find_element_by_class_name('readable')
@@ -89,7 +90,6 @@ def get_GR_reviews(driver, reviews):
             read.find_element_by_link_text('...more').click()
         except:
             pass
-
         rev = read.find_elements_by_tag_name('span')
         rvws[number] = ({'review':rev[0].text.replace('\n', ''), 'grade':grade} if len(rev)==1 else {'review':rev[1].text.replace('\n', ''), 'grade':grade})
         number+=1
