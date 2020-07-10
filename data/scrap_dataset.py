@@ -72,6 +72,10 @@ def get_book2(driver, name):
         raise NameError
 
 def get_GR_reviews(driver, reviews):
+    
+    #driver.find_element_by_class_name('next_page').click()
+    #driver.implicitly_wait(2)
+    
     reviews_container = driver.find_elements_by_class_name('review')
     rvws = {}
     number = len(reviews)
@@ -113,15 +117,21 @@ def get_gr_database(DRIVER, GR_USER, GR_PASS, books):
             continue
         driver.implicitly_wait(3)
 
-        get_GR_reviews(driver, reviews)
-
-        
-    driver.quit()
+        try:
+            get_GR_reviews(driver, reviews)
+        except:
+            continue
+    
     with open("../OUTPUT/goodread_reviews_dataset.json", "r+") as file:
         data = json.load(file)
         data.update(reviews)
         file.seek(0)
         json.dump(data, file)
+
+
+        
+    driver.quit()
+    
         
     return print(f'The reviews dataset has increased in {len(reviews)} reviews')
 
