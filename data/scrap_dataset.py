@@ -73,9 +73,12 @@ def get_book2(driver, name):
         raise NameError
 
 def get_GR_reviews(driver, reviews):
-    
-    driver.find_element_by_class_name('next_page').click()
-    time.sleep(5)
+    '''
+    Get the first 30 reviews from the book page
+    '''
+    #For reviews in the second page:
+    #driver.find_element_by_class_name('next_page').click()
+    #time.sleep(5)
 
     reviews_container = driver.find_elements_by_class_name('review')
     rvws = {}
