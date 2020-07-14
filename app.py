@@ -4,23 +4,18 @@ import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
-import json
-import tensorflow as tf
-import tensorflow_datasets as tfds
 import plotly.express as px
 from src.app_utils import *
 from src.goodreads_scrapping import GR_scrapping
-#Using keras directly (from keras import load_model)
-#returns an error probably due to a mismatch in the keras version and the keras tensorflow version
-from tensorflow import keras
+from src.model_utils import SentimentCLassifier
+import torch
+from transformers import BertTokenizer
 
-model = keras.models.load_model('./OUTPUT/models/model_2ltsm.h5')
-#Import the encoder from the tensorflow datasets,
-#THis is going to be deprecated, so I have to rerun the model with 
-#a non encoded data and encode it myself...
-_, info = tfds.load('imdb_reviews/subwords8k', with_info=True,
-                          as_supervised=True)
-encoder = info.features['text'].encoder
+#Get the PyTorch model
+tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+
+model = SentimentCLassifier(3)
+model.load_state_dict(torch.load('OUTPUT/models/best_model_custom.bin', map_location=torch.device('cpu')))
 
 
 DRIVER = os.getenv("DRIVER")
@@ -124,7 +119,7 @@ def update_book(n_clicks, input_data):
     if input_data=='':
         return None, None
     reviews = GR_scrapping(DRIVER, input_data)
-    predictions = sample_predict(reviews, model, encoder, pad=True)
+    predictions = sample_predict(reviews, model, tokenizer)
     return predictions, reviews
 
 @app.callback(
