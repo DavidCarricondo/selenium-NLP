@@ -52,6 +52,13 @@ input_card = dbc.Card([
 
 cards = dbc.Container([
     dbc.Row([dbc.Col(input_card, align='center')]),
+
+    dbc.Row([dbc.CardBody(
+        dbc.Row([
+            dbc.Col(html.Div(id='title_author'), width=6),
+            dbc.Col(html.Div(id='bookcover'), width=6)
+        ])
+    )]),
     dbc.Row([dbc.Col(
         dbc.Card([
             dbc.CardHeader(html.H5("Sentiment analysis of the reviews", style={'color': colors['text'], 'text-align': 'center'})),
@@ -89,15 +96,10 @@ cards = dbc.Container([
 app = dash.Dash(__name__,
                 external_stylesheets=external_stylesheets,
                 meta_tags=[
-
                     {
-
                         "name": "viewport",
-
                         "content": "width=device-width, initial-scale=1, maximum-scale=1",
-
                     },
-
                 ],)
 
 
@@ -105,6 +107,8 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 [
     html.H1("Book reviews analysis", style={'color': colors['text'], 'text-align': 'center'}),
     html.Div(id='prediction_store', style={'display': 'none'}),
+    html.Div(id='title_author_store', style={'display': 'none'}),
+    html.Div(id='cover_store', style={'display': 'none'}),
     dcc.Store(id='reviews_store'),
     html.Div(children=cards)
     
@@ -117,15 +121,25 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 
 @app.callback(
     [Output(component_id='prediction_store', component_property='children'),
-    Output('reviews_store', 'data')],
+    Output('reviews_store', 'data'),
+    Output(component_id='title_author_store', component_property='children'),
+    Output(component_id='cover_store', component_property='children')],
     [Input(component_id='submit_button', component_property='n_clicks')],
     [State(component_id='book_input', component_property='value')])
 def update_book(n_clicks, input_data):
     if input_data=='':
-        return None, None
-    reviews = GR_scrapping(DRIVER, input_data)
+        return None, None, None, None
+    reviews, title_author, pic = GR_scrapping(DRIVER, input_data)
     predictions = sample_predict(reviews, model, encoder, pad=True)
-    return predictions, reviews
+    return predictions, reviews, title_author, pic
+
+@app.callback(
+    Output(component_id='title_author', component_property='children'),
+    [Input(component_id='title_author_store', component_property='children')])
+def showtitle(title_author):
+    if title_author==None:
+        return None
+    return html.H2(title_author, style={'color': colors['text'], 'text-align': 'center'})
 
 @app.callback(
     Output(component_id='output1', component_property='children'),

@@ -63,4 +63,20 @@ def get_GR_reviews(driver):
         reviews[i] = (rev[0].text if len(rev)==1 else rev[1].text)
     return reviews
 
+def get_title_and_pic(driver):
+
+    title = driver.find_element_by_id('bookTitle').text
+    
+    author = driver.find_element_by_id('bookAuthors')
+    authors = author.find_elements_by_class_name('authorName')
+    aut = ', '.join([aut.text for aut in authors])
+
+    title_author = title.upper() + '\n' + aut
+
+    pic = driver.find_element_by_id('coverImage').get_attribute("src")
+
+    return title_author, pic
+
+
+
     
