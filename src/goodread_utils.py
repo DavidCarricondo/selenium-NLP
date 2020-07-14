@@ -1,4 +1,7 @@
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 def gr_log(driver, user, password):
     username_field = driver.find_element_by_id("userSignInFormEmail")
@@ -32,7 +35,12 @@ def get_book(driver, name, log=False):
     #Input the book name and hit enter
     search_box.send_keys(name)
     search_box.send_keys(Keys.RETURN)
-    driver.implicitly_wait(4)
+
+    #close log-in banner
+    close_button_path = "/html/body/div[3]/div/div/div[1]" 
+    wait = WebDriverWait(driver, 10)
+    close_button = wait.until(EC.visibility_of_element_located((By.XPATH, close_button_path)))
+    close_button .click()
 
     #SELECT THE FIRST INSTANCE
     driver.find_element_by_class_name('bookTitle').click()
