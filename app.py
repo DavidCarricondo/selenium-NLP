@@ -139,7 +139,16 @@ def update_book(n_clicks, input_data):
 def showtitle(title_author):
     if title_author==None:
         return None
-    return html.H2(title_author, style={'color': colors['text'], 'text-align': 'center'})
+    return html.H3(title_author, style={'color': colors['text'], 'text-align': 'left'})
+
+@app.callback(
+    Output(component_id='bookcover', component_property='children'),
+    [Input(component_id='cover_store', component_property='children')])
+def showcover(cover_src):
+    if cover_src==None:
+        return None
+    return html.Img(src=cover_src, style={'height':'50%', 'width':'50%', 'text-align':'right'})
+
 
 @app.callback(
     Output(component_id='output1', component_property='children'),
