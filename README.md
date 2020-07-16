@@ -21,3 +21,4 @@ Additionally, other visuals are created to show the most frequent words used in 
 
 ## Demo
 
+![Alt Text](INPUT/Dashboard_demo.gif)
