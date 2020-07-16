@@ -1,4 +1,4 @@
-# Book reviews analyzer
+# Book reviews analyzer (still in progress)
 
 This is a dashboard created with dash that analyzes book reviews from goodreads for their sentiment and looks at the most frequently used words.
 
