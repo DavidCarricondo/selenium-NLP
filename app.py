@@ -55,8 +55,9 @@ cards = dbc.Container([
 
     dbc.Row([dbc.CardBody(
         dbc.Row([
-            dbc.Col(html.Div(id='title_author'), width=6),
-            dbc.Col(html.Div(id='bookcover'), width=6)
+            dbc.Col([dbc.Row(html.Div(id='title')),
+                    dbc.Row(html.Div(id='author'))], width=6),
+            dbc.Col(html.Div(id='bookcover'), width=6),
         ])
     )]),
     dbc.Row([dbc.Col(
@@ -107,8 +108,6 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 [
     html.H1("Book reviews analysis", style={'color': colors['text'], 'text-align': 'center'}),
     html.Div(id='prediction_store', style={'display': 'none'}),
-    html.Div(id='title_author_store', style={'display': 'none'}),
-    html.Div(id='cover_store', style={'display': 'none'}),
     dcc.Store(id='reviews_store'),
     html.Div(children=cards)
     
@@ -122,33 +121,17 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 @app.callback(
     [Output(component_id='prediction_store', component_property='children'),
     Output('reviews_store', 'data'),
-    Output(component_id='title_author_store', component_property='children'),
-    Output(component_id='cover_store', component_property='children')],
+    Output(component_id='title', component_property='children'),
+    Output(component_id='author', component_property='children'),
+    Output(component_id='bookcover', component_property='children')],
     [Input(component_id='submit_button', component_property='n_clicks')],
     [State(component_id='book_input', component_property='value')])
 def update_book(n_clicks, input_data):
     if input_data=='':
-        return None, None, None, None
-    reviews, title_author, pic = GR_scrapping(DRIVER, input_data)
+        return None, None, None, None, None
+    reviews, title, author, pic = GR_scrapping(DRIVER, input_data)
     predictions = sample_predict(reviews, model, encoder, pad=True)
-    return predictions, reviews, title_author, pic
-
-@app.callback(
-    Output(component_id='title_author', component_property='children'),
-    [Input(component_id='title_author_store', component_property='children')])
-def showtitle(title_author):
-    if title_author==None:
-        return None
-    return html.H3(title_author, style={'color': colors['text'], 'text-align': 'left'})
-
-@app.callback(
-    Output(component_id='bookcover', component_property='children'),
-    [Input(component_id='cover_store', component_property='children')])
-def showcover(cover_src):
-    if cover_src==None:
-        return None
-    return html.Img(src=cover_src, style={'height':'50%', 'width':'50%', 'text-align':'right'})
-
+    return predictions, reviews, html.H3(title, style={'color': colors['text'], 'text-align': 'left'}), html.H3(author, style={'color': colors['text'], 'text-align': 'left'}), html.Img(src=pic, style={'height':'50%', 'width':'50%', 'text-align':'right'})
 
 @app.callback(
     Output(component_id='output1', component_property='children'),

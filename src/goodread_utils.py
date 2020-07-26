@@ -71,11 +71,9 @@ def get_title_and_pic(driver):
     authors = author.find_elements_by_class_name('authorName')
     aut = ', '.join([aut.text for aut in authors])
 
-    title_author = title.upper() + '\n' + aut
-
     pic = driver.find_element_by_id('coverImage').get_attribute("src")
 
-    return title_author, pic
+    return title.upper(), aut, pic
 
 
 

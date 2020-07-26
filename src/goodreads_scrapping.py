@@ -26,7 +26,7 @@ def GR_scrapping(DRIVER, BOOK_NAME, GR_PASS=None, GR_USER=None):
 
 
     #GET THE REVIEWS
-    title_author, pic = get_title_and_pic(driver)
+    title, author, pic = get_title_and_pic(driver)
     reviews = get_GR_reviews(driver)
 
     #Save json:
@@ -35,4 +35,4 @@ def GR_scrapping(DRIVER, BOOK_NAME, GR_PASS=None, GR_USER=None):
 
     driver.quit()
 
-    return reviews, title_author, pic
+    return reviews, title, author, pic
