@@ -50,8 +50,17 @@ input_card = dbc.Card([
     ),
 ])
 
+def sentiment_paragraph():
+    paragraph = html.Div([html.H3('Sentiment prediction of the reviews', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
+    html.Div('A bidirectional recursive neural network with LSTM blocks is used to conduct an analysis\
+         of the last thirty reviews of the book from goodreads.com. The model predicts a value from -5 to +5 \
+             (-5 being very negative, 0 being neutral and +5 being very positive). The left figure is a boxplot \
+                 showing the distribution of the predictions, and the right figure is a barplot showing the individual\
+                      sentiment prediction of the reviews.', className='card-text')], className="card border-success mb-3")
+    return paragraph
+    
 cards = dbc.Container([
-    dbc.Row([dbc.Col(input_card, align='center')]),
+    dbc.Row(input_card, align='center'),
 
     dbc.Row([dbc.CardBody(
         dbc.Row([
@@ -60,17 +69,18 @@ cards = dbc.Container([
             dbc.Col(html.Div(id='bookcover'), width=6),
         ])
     )]),
-    dbc.Row([dbc.Col(
+    dbc.Row(sentiment_paragraph()),
+    dbc.Row([dbc.Col([
         dbc.Card([
-            dbc.CardHeader(html.H5("Sentiment analysis of the reviews", style={'color': colors['text'], 'text-align': 'center'})),
-            dbc.CardBody(
+            dbc.CardBody([
                 dbc.Row([
                     dbc.Col( html.Div(id='output1'), width=6), 
                     dbc.Col(html.Div(id='output2'), width=6),
                 ])
-            )
+            ]),
         ])
-    )]),
+    ])]),
+
     dbc.Row([dbc.Col(
         dbc.Card([
             dbc.CardHeader(html.H5("Word frequency of the reviews", style={'color': colors['text'], 'text-align': 'center'})),
@@ -106,7 +116,7 @@ app = dash.Dash(__name__,
 
 app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 [
-    html.H1("Book reviews analysis", style={'color': colors['text'], 'text-align': 'center'}),
+    html.H1("GOODREAD REVIEWS ANALYZER", style={'color': colors['text'], 'text-align': 'center'}),
     html.Div(id='prediction_store', style={'display': 'none'}),
     dcc.Store(id='reviews_store'),
     html.Div(children=cards)
