@@ -59,6 +59,11 @@ def sentiment_paragraph():
                       sentiment prediction of the reviews.', className='card-text')], className="card border-success mb-3")
     return paragraph
     
+def frequency_paragraph():
+    paragraph = html.Div([html.H3('Word frequency in the reviews', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
+    html.Div('bla-bla-bla-bla', className='card-text')], className="card border-success mb-3")
+    return paragraph
+
 cards = dbc.Container([
     dbc.Row(input_card, align='center'),
 
@@ -69,7 +74,9 @@ cards = dbc.Container([
             dbc.Col(html.Div(id='bookcover'), width=6),
         ])
     )]),
-    dbc.Row(sentiment_paragraph()),
+
+    dbc.Row(dbc.Col(sentiment_paragraph())),
+
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardBody([
@@ -81,9 +88,10 @@ cards = dbc.Container([
         ])
     ])]),
 
+    dbc.Row(dbc.Col(frequency_paragraph())),
+
     dbc.Row([dbc.Col(
         dbc.Card([
-            dbc.CardHeader(html.H5("Word frequency of the reviews", style={'color': colors['text'], 'text-align': 'center'})),
             dbc.CardBody(
                 dbc.Row([
                     dbc.Col(html.Div(id='wordcloud'), width=6), 
