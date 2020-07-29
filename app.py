@@ -30,7 +30,7 @@ GR_USER = os.getenv("GR_USER")
 
 ###STYLE
 
-external_stylesheets = external_stylesheets = [dbc.themes.BOOTSTRAP]
+external_stylesheets = external_stylesheets = [dbc.themes.DARKLY]
 
 colors = {
     'background': '#111111',
