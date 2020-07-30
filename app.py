@@ -61,7 +61,10 @@ def sentiment_paragraph():
     
 def frequency_paragraph():
     paragraph = html.Div([html.H3('Word frequency in the reviews', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
-    html.Div('bla-bla-bla-bla', className='card-text')], className="card border-success mb-3")
+    html.Div('The most frequent words in the reviews are calculated and visualized using three different visualization methods. \
+        The first figure is a WordCloud with the most frequent words represented with a bigger size. The figure to the left \
+            is a WordTree, with the most frequent words having a larger area in the figure. Finally, there is a simple barplot \
+                with the most frequent words having larger bars.', className='card-text')], className="card border-success mb-3")
     return paragraph
 
 cards = dbc.Container([
