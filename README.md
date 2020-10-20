@@ -19,6 +19,21 @@ The results are returned in the form of plotly visuals in the dashboard.
 
 Additionally, other visuals are created to show the most frequent words used in the reviews.
 
+## Deploy resources:
+
+-Installing selenium in ec2 instance:
+
+https://medium.com/@praneeth.jm/launching-and-connecting-to-an-aws-ec2-instance-6678f660bbe6
+
+-Running scripts in ec2 with putty:
+
+https://medium.com/@praneeth.jm/running-python-scripts-on-an-aws-ec2-instance-8c01f9ee7b2f
+
+-Running ChromeDriver and Selenium in Python on an AWS EC2 Instance:
+
+https://medium.com/@praneeth.jm/running-chromedriver-and-selenium-in-python-on-an-aws-ec2-instance-2fb4ad633bb5
+
+
 ## Demo
 
 ![Alt Text](INPUT/Dashboard_demo.gif)
