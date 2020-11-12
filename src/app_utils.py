@@ -1,29 +1,32 @@
 import tensorflow as tf
 from wordcloud import WordCloud, STOPWORDS
 import plotly.graph_objs as go
+import pickle
 
-def pad_to_size(vec, size):
+def load_vocabulary(vocab_file, num_oov_buckets = 5000):
     '''
-    Zero pad the model input
+    Creates a StaticTable vocabulary from the vocabulary list 
     '''
-    zeros = [0] * (size - len(vec))
-    vec.extend(zeros)
-    return vec
+    words = tf.constant(vocab_file)
+    word_ids = tf.range(len(vocab_file), dtype=tf.int64)
+    vocab_init = tf.lookup.KeyValueTensorInitializer(words, word_ids)
+    return tf.lookup.StaticVocabularyTable(vocab_init, num_oov_buckets)
 
-#Function to get the predictions:
-def sample_predict(sample_pred_text, model, encoder,  pad):
-    '''
-    Get the prediction of the sample from the model after preprocessing
-    '''
-    predictions = []
-    for k, v in sample_pred_text.items():
-        rev = v.replace('\n', '')
-        encoded_sample_pred_text = encoder.encode(rev)
-        if pad:
-            encoded_sample_pred_text = pad_to_size(encoded_sample_pred_text, 64)
-        encoded_sample_pred_text = tf.cast(encoded_sample_pred_text, tf.float32)
-        predictions.append(model.predict(tf.expand_dims(encoded_sample_pred_text, 0))[0][0])
-    return predictions
+def sample_predict(sample_pred_texts, table):
+    reviews = [rev for key, rev in sample_pred_texts.items()]
+    rev_tensor = tf.convert_to_tensor(reviews)
+    X = tf.strings.substr(rev_tensor, 0, 2000)
+    X = tf.strings.regex_replace(X, b"<br\\s*/?>", b" ")
+    X = tf.strings.regex_replace(X, b"[^a-zA-Z']", b" ")
+    X = tf.strings.split(X)
+    X = X.to_tensor(default_value=b"<pad>")
+    return table.lookup(X)
+
+def decode(predictions):
+    codex = {'0':'Negative', '1':'Neutral', '2':'Positive'}
+    return [codex[str(np.argmax(e))] for e in predictions]  
+
+
 
 ##Graphs
 

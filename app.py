@@ -14,13 +14,13 @@ from src.goodreads_scrapping import GR_scrapping
 #returns an error probably due to a mismatch in the keras version and the keras tensorflow version
 from tensorflow import keras
 
-model = keras.models.load_model('./OUTPUT/models/model_2ltsm.h5')
-#Import the encoder from the tensorflow datasets,
-#THis is going to be deprecated, so I have to rerun the model with 
-#a non encoded data and encode it myself...
-_, info = tfds.load('imdb_reviews/subwords8k', with_info=True,
-                          as_supervised=True)
-encoder = info.features['text'].encoder
+model = keras.models.load_model('./OUTPUT/models/model_custom_rnn.h5')
+#Loads the vocabulary to use:
+#Load vocabulary file and create the statictable:
+with open('OUTPUT/vocabulary', 'rb') as f:
+    vocab = pickle.load(f)
+f.close()
+table = load_vocabulary(vocab, num_oov_buckets = 5000)
 
 
 DRIVER = os.getenv("DRIVER")
@@ -151,7 +151,9 @@ def update_book(n_clicks, input_data):
     if input_data=='':
         return None, None, None, None, None
     reviews, title, author, pic = GR_scrapping(DRIVER, input_data)
-    predictions = sample_predict(reviews, model, encoder, pad=True)
+    preprocess = sample_predict(reviews, table)
+    pred = model.predict(preprocess)
+    predictions = decode(pred)
     return predictions, reviews, html.H3(title, style={'color': colors['text'], 'text-align': 'left'}), html.H3(author, style={'color': colors['text'], 'text-align': 'left'}), html.Img(src=pic, style={'height':'50%', 'width':'50%', 'text-align':'right'})
 
 @app.callback(
