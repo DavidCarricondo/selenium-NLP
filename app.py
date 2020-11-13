@@ -5,9 +5,11 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import json
+import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import plotly.express as px
+import plotly.graph_objects as go
 from src.app_utils import *
 from src.goodreads_scrapping import GR_scrapping
 #Using keras directly (from keras import load_model)
@@ -50,6 +52,9 @@ input_card = dbc.Card([
     ),
 ])
 
+tab1 = html.Div(id='output1_1')
+tab2 = html.Div(id='output1')
+
 def sentiment_paragraph():
     paragraph = html.Div([html.H3('Sentiment prediction of the reviews', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
     html.Div('A bidirectional recursive neural network with LSTM blocks is used to conduct an analysis\
@@ -62,7 +67,7 @@ def sentiment_paragraph():
 def frequency_paragraph():
     paragraph = html.Div([html.H3('Word frequency in the reviews', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
     html.Div('The most frequent words in the reviews are calculated and visualized using three different visualization methods. \
-        The first figure is a WordCloud with the most frequent words represented with a bigger size. The figure to the left \
+        The first figure is a WordCloud with the most frequent words represented with a bigger size. The figure to the right \
             is a WordTree, with the most frequent words having a larger area in the figure. Finally, there is a simple barplot \
                 with the most frequent words having larger bars.', className='card-text')], className="card border-success mb-3")
     return paragraph
@@ -84,7 +89,8 @@ cards = dbc.Container([
         dbc.Card([
             dbc.CardBody([
                 dbc.Row([
-                    dbc.Col( html.Div(id='output1'), width=6), 
+                    dbc.Col(dbc.Tabs([dbc.Tab(tab1, label='Pie chart'),
+                                    dbc.Tab(tab2, label='Bar plot')]), width=6), 
                     dbc.Col(html.Div(id='output2'), width=6),
                 ])
             ]),
@@ -155,6 +161,19 @@ def update_book(n_clicks, input_data):
     pred = model.predict(preprocess)
     predictions = decode(pred)
     return predictions, reviews, html.H3(title, style={'color': colors['text'], 'text-align': 'left'}), html.H3(author, style={'color': colors['text'], 'text-align': 'left'}), html.Img(src=pic, style={'height':'50%', 'width':'50%', 'text-align':'right'})
+
+@app.callback(
+    Output(component_id='output1_1', component_property='children'),
+    [Input(component_id='prediction_store', component_property='children')])
+def create_piechart(predictions):
+    if predictions==None:
+        return None
+    values = [predictions.count('Neutral'), predictions.count('Positive'), predictions.count('Negative')]
+    pull = [0, 0, 0]
+    pull[np.argmax(values)] = 0.2
+    fig = go.Figure(data=[go.Pie(labels=['Neutral', 'Positive', 'Negative'], values=values, pull=pull)])
+    fig.update_layout(height=500, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
+    return dcc.Graph(figure=fig)
 
 @app.callback(
     Output(component_id='output1', component_property='children'),
