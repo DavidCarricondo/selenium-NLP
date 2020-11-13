@@ -20,7 +20,7 @@ model = keras.models.load_model('./OUTPUT/models/model_custom_rnn.h5')
 with open('OUTPUT/vocabulary', 'rb') as f:
     vocab = pickle.load(f)
 f.close()
-table = load_vocabulary(vocab, num_oov_buckets = 5000)
+table = load_vocabulary(vocab, num_oov_buckets = 1000)
 
 
 DRIVER = os.getenv("DRIVER")

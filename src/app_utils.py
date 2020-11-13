@@ -2,6 +2,7 @@ import tensorflow as tf
 from wordcloud import WordCloud, STOPWORDS
 import plotly.graph_objs as go
 import pickle
+import numpy as np
 
 def load_vocabulary(vocab_file, num_oov_buckets = 5000):
     '''
