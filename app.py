@@ -187,8 +187,8 @@ def sample_review(reviews):
     if reviews==None:
         return None
     rev_key = sample(range(len(reviews)),1)[0]
-    rev_examp = html.Div([html.H3('Sample review', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
-    html.Div(reviews[str(rev_key)], className='card-text')], className="card border-success mb-3")
+    rev_examp = html.Div([html.H4('Sample review', className='card-header', style={'color': 'white', 'text-align': 'center'}), 
+    html.Div(reviews[str(rev_key)], className='card-text')], className="card border-success mb-3", style={'overflowY':'scroll','height':550})
     return rev_examp
 
 @app.callback(
