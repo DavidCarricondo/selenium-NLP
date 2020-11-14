@@ -63,16 +63,16 @@ tab5 = html.Div(id='freqplot')
 def sentiment_paragraph():
     paragraph = html.Div([html.H3('Sentiment prediction of the reviews', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
     html.Div('A bidirectional recursive neural network with LSTM blocks is used to conduct an analysis\
-         of the last thirty reviews of the book from goodreads.com. The model predicts a value from -5 to +5 \
-             (-5 being very negative, 0 being neutral and +5 being very positive). The left figure is a boxplot \
-                 showing the distribution of the predictions, and the right figure is a barplot showing the individual\
-                      sentiment prediction of the reviews.', className='card-text')], className="card border-success mb-3")
+         of the last thirty reviews of the book from goodreads.com. The model predicts one of three categories \
+             (Negative, Neutral, Positive). We can visualize the cumulative results with a barplot \
+                 showing the distribution of the predictions, or with a pie chart showing the percentage of reviews in each class.\
+                      Finally, we can also read a sample review.', className='card-text')], className="card border-success mb-3")
     return paragraph
     
 def frequency_paragraph():
     paragraph = html.Div([html.H3('Word frequency in the reviews', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
     html.Div('The most frequent words in the reviews are calculated and visualized using three different visualization methods. \
-        The first figure is a WordCloud with the most frequent words represented with a bigger size. The figure to the right \
+        The first figure is a WordCloud with the most frequent words represented with a bigger size. Next figure \
             is a WordTree, with the most frequent words having a larger area in the figure. Finally, there is a simple barplot \
                 with the most frequent words having larger bars.', className='card-text')], className="card border-success mb-3")
     return paragraph
@@ -166,7 +166,7 @@ def create_piechart(predictions):
     values = [predictions.count('Neutral'), predictions.count('Positive'), predictions.count('Negative')]
     pull = [0, 0, 0]
     pull[np.argmax(values)] = 0.2
-    fig = go.Figure(data=[go.Pie(labels=['Neutral', 'Positive', 'Negative'], values=values, pull=pull)])
+    fig = go.Figure(data=[go.Pie(labels=['Neutral', 'Positive', 'Negative'], values=values, pull=pull, textinfo='label+percent', title='Percentage of reviews per sentiment')])
     fig.update_layout(height=500, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
     return dcc.Graph(figure=fig)
 
@@ -176,7 +176,7 @@ def create_piechart(predictions):
 def create_boxplot(predictions):
     if predictions==None:
         return None
-    fig = px.histogram(predictions, marginal='box')
+    fig = px.histogram(predictions, title = 'NUmber of reviews per sentiment')
     fig.update_layout(height=500, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
     return dcc.Graph(figure=fig)
 

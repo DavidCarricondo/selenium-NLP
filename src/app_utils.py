@@ -103,6 +103,7 @@ def plotly_wordcloud(reviews):
             },
             "margin": dict(t=20, b=20, l=10, r=10, pad=4),
             "hovermode": "closest",
+            "title" : 'World cloud of word frequency'
         }
     )
 
@@ -118,15 +119,15 @@ def plotly_wordcloud(reviews):
                 "y": word_list_top,
                 "x": freq_list_top,
                 "type": "bar",
-                "name": "",
+                "name": "Bar plot of the word frequency",
                 "orientation": "h",
             }
         ],
-        "layout": {"height": "550", "margin": dict(t=20, b=20, l=100, r=20, pad=4)},
+        "layout": {"height": "550", "margin": dict(t=20, b=20, l=100, r=20, pad=4), "title" : 'Bar plot of word frequency'},
     }
     treemap_trace = go.Treemap(
         labels=word_list_top, parents=[""] * len(word_list_top), values=freq_list_top
     )
-    treemap_layout = go.Layout({"margin": dict(t=10, b=10, l=5, r=5, pad=4)})
+    treemap_layout = go.Layout({"margin": dict(t=10, b=10, l=5, r=5, pad=4),"title" : 'Tree map of words frequency'})
     treemap_figure = {"data": [treemap_trace], "layout": treemap_layout}
     return wordcloud_figure_data, frequency_figure_data, treemap_figure
