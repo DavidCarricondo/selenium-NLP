@@ -6,6 +6,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import json
 import numpy as np
+from random import sample
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import plotly.express as px
@@ -55,6 +56,10 @@ input_card = dbc.Card([
 tab1 = html.Div(id='output1_1')
 tab2 = html.Div(id='output1')
 
+tab3 = html.Div(id='wordcloud')
+tab4 = html.Div(id='treeplot')
+tab5 = html.Div(id='freqplot')
+
 def sentiment_paragraph():
     paragraph = html.Div([html.H3('Sentiment prediction of the reviews', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
     html.Div('A bidirectional recursive neural network with LSTM blocks is used to conduct an analysis\
@@ -101,22 +106,12 @@ cards = dbc.Container([
 
     dbc.Row([dbc.Col(
         dbc.Card([
-            dbc.CardBody(
-                dbc.Row([
-                    dbc.Col(html.Div(id='wordcloud'), width=6), 
-                    dbc.Col(html.Div(id='treeplot'), width=6)
-                ]),
+            dbc.CardBody(dbc.Tabs([dbc.Tab(tab3, label='Word Cloud'),
+                                    dbc.Tab(tab4, label='Tree plot'),
+                                    dbc.Tab(tab5, label='Bar plot')])
             )
         ])
-    )]),
-    dbc.Row([dbc.Col(
-        dbc.Card([
-            dbc.CardBody(
-                html.Div(id='freqplot')
-            )
-        ])
-        )
-    ]),
+    )])
 ])
 
 ### DASHBOARD
@@ -187,14 +182,14 @@ def create_boxplot(predictions):
 
 @app.callback(
     Output(component_id='output2', component_property='children'),
-    [Input(component_id='prediction_store', component_property='children')])
-def create_barplot(predictions):
-    if predictions==None:
+    [Input('reviews_store', 'data')])
+def sample_review(reviews):
+    if reviews==None:
         return None
-    return dcc.Graph(figure={
-        'data': [{'x':predictions, 'type':'bar', 'name':'PREDICTIONS'}], #type: line, histogram, bar
-        'layout': {'title':'Sentiment predictions'}
-        })
+    rev_key = sample(range(len(reviews)),1)[0]
+    rev_examp = html.Div([html.H3('Sample review', className='card-header', style={'color': colors['text'], 'text-align': 'center'}), 
+    html.Div(reviews[str(rev_key)], className='card-text')], className="card border-success mb-3")
+    return rev_examp
 
 @app.callback(
     Output(component_id='wordcloud', component_property='children'),
